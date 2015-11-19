@@ -1,0 +1,70 @@
+﻿@model IEnumerable<CircusIOC.Models.Pictures>
+
+@{
+    ViewBag.Title = "图片列表";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pathTip">
+    <a class="pathTipItem" @(string.IsNullOrEmpty(ViewBag.searchStr) ? "" : "href=" + "/Admin/Pictures/List")>图片列表</a>
+    @{
+        if (!string.IsNullOrEmpty(ViewBag.searchStr))
+        {
+            <a class="pathTipItem">@ViewBag.searchStr</a>
+        }
+    }
+</div>
+<div class="inputSet">
+    <a class="inputButton" href='/Admin/Picture/Create' lefticon style="background-image: url(/BackSet/src/media/icon_plus.png)">添加图片基本信息</a>
+    <div class="splitter"></div>
+    <form action="/Admin/Picture/List" id="form1">
+        <input type="text" name="searchStr" class="inputText" placeholder="ID、图片名称" />
+        <a class="inputButton" onclick="document.getElementById('form1').submit();" lefticon style=" background-image:url(/BackSet/src/media/icon_search.png)">搜索</a>
+    </form>
+</div>
+<div class="contentlist">
+    <table>
+        <thead>
+            <tr>
+                <td width="50">ID</td>
+                <td>图片名称</td>
+                <td width="200">图片</td>
+                <td width="100">最近修改时间</td>
+                <td width="100">编辑信息</td>
+                <td width="50">删除</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td> @item.PicHead</td>
+                            <td><img src="@item.PicAD" style="width:150px;" /></td>
+                            <td>@item.CreateTime</td>
+                            <td><a class="edit" href="/Admin/Picture/Edit/@item.Id"></a></td>
+                            <td><a class="delete" href="@Url.Action("Delete", new { id=item.Id,returnURL=Request.Url.ToString()})"></a></td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<form id="form_pageindex" action="/Admin/Picture/List" method="get">
+    <div class="inputSet">
+        <input type="hidden" name="searchStr" value="@ViewBag.searchStr" class="inputText">
+        <a href="@ViewBag.firstPage" class="inputButton">首页</a>
+        <a href="@ViewBag.perPage" class="inputButton"> &lt; 上一页</a>
+        <div class="splitter"></div>
+        <input type="text" class="inputText" name="pageIndex" style="width:40px;" value="@ViewBag.pageX" />
+        <span style="position:relative; float:left; line-height:16px; padding:8px; margin-right:8px;">/@ViewBag.pageCount</span>
+        <a onclick="document.getElementById('form_pageindex').submit()" class="inputButton">转至</a>
+        <div class="splitter"></div>
+        <a href="@ViewBag.nextPage" class="inputButton">下一页 &gt;</a>
+        <a href="@ViewBag.lastPage" class="inputButton">末页</a>
+    </div>
+</form>

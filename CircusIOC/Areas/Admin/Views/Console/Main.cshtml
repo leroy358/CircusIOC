@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "管理系统";
+}
+
+@section Head{
+    <link rel="stylesheet" type="text/css" href="~/BackSet/src/other/uiTree/uiTree.css">
+    <link rel="stylesheet" type="text/css" href="~/BackSet/src/css/frame_main.css">
+    <script src="~/BackSet/src/other/uiTree/uiTree.js"></script>
+    <script src="~/BackSet/src/js/main.js"></script>
+}
+
+<div id="leftMenuArea">
+    <div id="menuTitleArea">
+        <span id="menuTitle">当前用户：@Session["admin"]</span>
+        <a id="logout" href="@Url.Action("Exit")">[退出]</a>
+    </div>
+    <div id="menuTreeArea">
+        <div id="menuTreeAreaInnerWrapper">
+            <div class="treeWrapper">
+                <a class="treePackItem">内容管理</a>
+                <span class="treePack">
+                    <a class="treeItem" link="/Admin/Picture/List">图片管理</a>
+                </span>
+                <a class="treePackItem">账户分配</a>
+                <span class="treePack">
+                    <a class="treeItem" link="/Admin/Users/List">账户管理</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="openedMenuItemsArea">
+    <div id="openedMenuItemsAreaInnerWrapper"></div>
+</div>
+<div id="contentArea">
+    <div id="contentAreaInnerWrapper"></div>
+</div>

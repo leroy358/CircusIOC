@@ -1,0 +1,169 @@
+﻿@model CircusIOC.Models.Pictures
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "图片信息编辑";
+}
+
+@section Head{
+    <link rel="stylesheet" type="text/css" href="~/BackSet/src/other/simple-Uploader/simple-uploader.css">
+    <script src="~/BackSet/src/other/simple-Uploader/simple-uploader.js"></script>
+     @*<!-- 配置文件 -->
+    <script type="text/javascript" src="/Ueditor/ueditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="/UEditor/ueditor.all.js"></script>
+    <!--编辑器的默认样式-->
+    <link rel ="stylesheet" type="text/css" href="/UEditor/themes/default/css/ueditor.css" />*@
+
+    <script src="/ckeditor/ckeditor.js" type="text/javascript"></script>
+    <script src="/ckfinder/ckfinder.js" type="text/javascript"></script>
+}
+
+<form action="/Admin/Picture/SavePic" id="form1" method="post">
+    <div class="pathTip">
+        <a class="pathTipItem" href="/Admin/Pictures/List">图片列表</a>
+        @{
+            if (ViewBag.IsCreate)
+            {
+                <a class="pathTipItem" href="/Admin/Pictures/List?searchStr=@Model.PicHead">@Model.PicHead</a>
+                <a class="pathTipItem">图片信息管理</a>
+            }
+            else
+            {
+                <a class="pathTipItem">添加图片信息</a>
+            }
+        }
+    </div>
+    <div class="contentGroup">
+        <div class="contentGroupTitle">
+            @(ViewBag.IsCreate ? "图片信息管理" : "添加图片信息")
+        </div>
+        <input type="hidden" name="Id" value="@(ViewBag.IsCreate?Model.Id.ToString():"")" />
+        <input type="hidden" name="IsCreate" value="@(ViewBag.IsCreate?"true":"false")" />
+        <div class="contentUnit">
+            <div class="title">图片标题</div>
+            <div class="content">
+                <input id="inputName" type="text" name="PicHead" class="inputText" value='@(ViewBag.IsCreate?Model.PicHead:"")' />
+            </div>
+        </div>
+        <div class="contentUnit">
+            <div class="title">图片</div>
+            <div class="content">
+                <input type="hidden" id="headlinePicIndex" name="PicAD" value='@(ViewBag.IsCreate?Model.PicAD:"")'>
+                <div style="position:relative;height: 32px;" id="upload_headlinePicIndex"></div>
+                <script>
+                    headline = simple.uploader.create({
+                        appendTo: document.getElementById("upload_headlinePicIndex"),
+                        url: "/Upload/Images",//上传地址
+                        valueBindTo: document.getElementById("headlinePicIndex"),
+                        limit: {
+                            fileFormat: "jpg|jpeg|png"//文件格式
+                        },
+                        uiText: {
+                            selectFile: "上传图片（单张）",
+                            limit: "没选对文件"
+                        },
+                        onEvent: {
+                            onSelectFile: function (files, limitValidateResult) {
+                                a_onSelectFile_a = files;
+                                a_onSelectFile_b = limitValidateResult;
+                            },
+                            onProgress: function (e) {
+                                a_onProgress_a = e.loaded;
+                            },
+                            onError: function (e) {
+                                a_onError_a = e;
+                            },
+                            onCancelWhenUpload: function () {
+                                a_onCancelWhenUpload_a = 111;
+                            },
+                            onCancelWhenComplete: function () {
+                                a_onCancelWhenComplete_a = 111;
+                            },
+                            onComplete: function (files, returnResult) {
+                                a_onComplete_a = files;
+                                a_onComplete_b = returnResult;
+                                var str = "";
+                                var pics = returnResult.substring(0, returnResult.length).split('|');
+                                for (var i = 0; i < pics.length; i++) {
+                                    str += "<img style='width:200px;' src='" + pics[i] + "' />";
+                                }
+                                showpicIndex.innerHTML = str;
+                            }
+                        }
+                    });
+
+                    headline.setData({
+                        multiple: false,
+                        limit: {
+                            fileSizeMin: 1,
+                            fileSizeMax: 20480
+                        }
+                    });
+                    ab = headline.getData();
+                </script>
+            </div>
+        </div>
+        <div class="contentUnit">
+            <div id="showpicIndex"><img src="@Model.PicAD" style="width:320px;" /></div>
+        </div>
+        <div class="contentUnit" rowcontent>
+            <div class="title">图片简介</div>
+            <div class="content">
+                <!--
+                div不可以在标签里设置初始值，初始值要在创建编辑器的时候配置initialContent参数，初始值会在编辑器外部显示，但不覆盖
+                textarea可以在标签里设置初始值，也可以在创建编辑器的时候配置initialContent参数，但是标签内初始值可覆盖initialContent参数
+                -->
+                @*<div id="texteditor" name="PicCont" style="height:350px;"></div>*@
+                @*<script id="texteditor" name="PicCont" style="height:350px;"></script>*@
+                @*<textarea id="texteditor" name="PicCont"></textarea>
+                <script type="text/javascript">
+                    var editor = new UE.ui.Editor({
+                        toolbars: [[
+                            'fullscreen',
+                            'bold', 'italic', 'underline', '|', 'forecolor', 'backcolor', 'selectall', 'cleardoc', '|',
+                            'customstyle', 'fontfamily', 'fontsize', '|',
+                            'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|',
+                            'link', 'unlink', '|', 'simpleupload', 'insertimage', '|',
+                            'date', 'time', 'spechars',
+                        ]],
+                        initialFrameHeight:320 ,
+                        initialContent:'@Html.Raw(ViewBag.IsCreate ? Model.PicCont : "")',
+                    });
+                    editor.render("texteditor");
+                </script>*@
+
+
+                <textarea id="texteditor" name="PicCont" >@Model.PicCont</textarea>
+                <script type="text/javascript">
+                    CKEDITOR.replace('texteditor');
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="inputSet">
+        <a class="inputButton" href='/Admin/Picture/List' lefticon style="background-image:url(/BackSet/src/media/icon_return.png)">退出</a>
+        <div class="splitter"></div>
+        <a class="inputButton" onclick="doCheck();" lefticon style="background-image:url(/BackSet/src/media/icon_disk.png)">提交</a>
+    </div>
+</form>
+<script>
+    var titleT, titleP, titleA;
+    //点提交调用此函数
+    function doCheck() {
+        titleNa = checkFunc("inputName");
+        titlePicH = checkFunc("headlinePicIndex");
+        titleIn = checkFunc("texteditor");
+
+        if (titleNa && titlePicH && titleIn) {
+            document.getElementById("form1").submit();
+        }
+        else alert("请确认图片信息完整后提交！");
+    }
+
+    //判断值是否空
+    function checkFunc(idd) {
+        if (document.getElementById(idd).value != "") return true;
+        else return false;
+    }
+</script>
